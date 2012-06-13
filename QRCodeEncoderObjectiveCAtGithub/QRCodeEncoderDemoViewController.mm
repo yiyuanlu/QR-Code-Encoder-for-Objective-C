@@ -21,13 +21,13 @@
     int qrcodeImageDimension = 250;
     
     //the string can be very long
-    NSString* aVeryLongURL = @"http://thelongestlistofthelongeststuffatthelongestdomainnameatlonglast.com/";
+    NSString* aVeryLongURL = @"我";
     
     //first encode the string into a matrix of bools, TRUE for black dot and FALSE for white. Let the encoder decide the error correction level and version
     DataMatrix* qrMatrix = [QREncoder encodeWithECLevel:QR_ECLEVEL_AUTO version:QR_VERSION_AUTO string:aVeryLongURL];
     
     //then render the matrix
-    UIImage* qrcodeImage = [QREncoder renderDataMatrix:qrMatrix imageDimension:qrcodeImageDimension];
+    UIImage* qrcodeImage = [QREncoder renderDataMatrix:qrMatrix imageDimension:qrcodeImageDimension foreground:0xFF000000 backgroud:0xFFFFFFFF trans:0x00FFFFFF];
     
     //put the image into the view
     UIImageView* qrcodeImageView = [[UIImageView alloc] initWithImage:qrcodeImage];

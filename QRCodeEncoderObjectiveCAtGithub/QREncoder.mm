@@ -78,13 +78,35 @@
     return matrix;
 }
 
-+ (DataMatrix*)encodeWithECLevel:(int)ecLevel version:(int)version string:(NSString *)string {
-    const char* cstring = [string cStringUsingEncoding:NSUTF8StringEncoding];
-    DataMatrix* matrix = [QREncoder encodeCStringWithECLevel:ecLevel version:version cstring:cstring];
++ (DataMatrix*)encodeWithECLevel:(int)ecLevel version:(int)version string:(NSString *)string 
+{
+    int len = strlen([string UTF8String]);
+    char *outstring = (char *)malloc(len+1);
+    memset(outstring,0,len+1);
+    memcpy(outstring,[string UTF8String],len);
+    NSLog(@"[%d]",len);
+    CQR_Encode* encoder = new CQR_Encode;
+    encoder->EncodeData(ecLevel, version, true, -1, outstring);
+    int dimension = encoder->m_nSymbleSize;
+    DataMatrix* matrix = [[[DataMatrix alloc] initWith:dimension] autorelease];
+    for (int y=0; y<dimension; y++) {
+        for (int x=0; x<dimension; x++) {
+            int v = encoder->m_byModuleData[y][x];
+            bool bk = v==1;
+            [matrix set:bk x:y y:x];
+        }
+    }
+    
+    delete encoder;
+    
+    free(outstring);
+    outstring = NULL;
+    
     return matrix;
 }
 
-+ (UIImage*)renderDataMatrix:(DataMatrix*)matrix imageDimension:(int)imageDimension {
++ (UIImage*)renderDataMatrix:(DataMatrix*)matrix imageDimension:(int)imageDimension foreground:(uint32_t)foregroud backgroud:(uint32_t)background trans:(uint32_t)trans;
+{
     
     const int bitsPerPixel = BITS_PER_BYTE * BYTES_PER_PIXEL;
     const int bytesPerLine = BYTES_PER_PIXEL * imageDimension;
@@ -97,7 +119,8 @@
     int offsetBottomAndRight = (imageDimension - pixelPerDot * matrixDimension - offsetTopAndLeft);
     
     // alpha, blue, green, red
-    const uint32_t white = 0xFFFFFFFF, black = 0xFF000000, transp = 0x00FFFFFF;
+//    const uint32_t white = 0xFFFFFFFF, black = 0xFF000000, transp = 0x00FFFFFF;
+    const uint32_t white = background, black = foregroud, transp = trans;
     
     uint32_t *ptrData = (uint32_t *)rawData;
     // top offset

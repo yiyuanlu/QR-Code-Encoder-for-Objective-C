@@ -27,7 +27,7 @@ const static unsigned char WHITE =  0xff;
 
 + (DataMatrix*)encodeWithECLevel:(int)ecLevel version:(int)version string:(NSString*)string;
 
-+ (UIImage*)renderDataMatrix:(DataMatrix*)matrix imageDimension:(int)imageDimension;
++ (UIImage*)renderDataMatrix:(DataMatrix*)matrix imageDimension:(int)imageDimension foreground:(uint32_t)foregroud backgroud:(uint32_t)background trans:(uint32_t)trans;
 
 @end
 
